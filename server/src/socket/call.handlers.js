@@ -1,6 +1,19 @@
 
 function registerCallHandlers(io, socket) {
 
+  // Tell the other participant that this client has installed its WebRTC listeners.
+  socket.on("call:ready", async () => {
+    const roomId = socket.data.roomId;
+
+    if (!roomId) return;
+
+    socket.data.callReady = true;
+    const roomSockets = await io.in(roomId).fetchSockets();
+    if (roomSockets.length === 2 && roomSockets.every((peer) => peer.data.callReady)) {
+      io.to(roomId).emit("call:ready");
+    }
+  });
+
   // Forward WebRTC offer to the other participant
   socket.on("call:offer", (data) => {
     const roomId = socket.data.roomId;

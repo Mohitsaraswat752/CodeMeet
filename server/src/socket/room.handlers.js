@@ -27,6 +27,7 @@ function registerRoomHandlers(io, socket, rooms) {
       }
     }
     socket.data.roomId = null;
+    socket.data.callReady = false;
     // Notify remaining participants
     io.to(roomId).emit("room:user-left", {
       socketId: socket.id,
@@ -47,6 +48,7 @@ function registerRoomHandlers(io, socket, rooms) {
     rooms.set(roomId, new Set([socket.id]));
     await socket.join(roomId);
     socket.data.roomId = roomId;
+    socket.data.callReady = false;
     socket.emit("room:created", {
       roomId,
       participants: 1,
@@ -77,6 +79,7 @@ function registerRoomHandlers(io, socket, rooms) {
     await socket.join(roomId);
     members.add(socket.id);
     socket.data.roomId = roomId;
+    socket.data.callReady = false;
     socket.emit("room:joined", {
       roomId,
       participants: members.size,

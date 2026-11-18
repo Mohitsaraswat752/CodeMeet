@@ -17,6 +17,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
   const [remoteStream, setRemoteStream] = useState(null);
   const [connectionState, setConnectionState] = useState("new");
   const [peerReady, setPeerReady] = useState(false);
+  const [partnerReady, setPartnerReady] = useState(false);
 
   useEffect(() => {
     if (!roomId || !localStream) return;
@@ -47,6 +48,10 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
     peer.onconnectionstatechange = () => {
       setConnectionState(peer.connectionState);
     };
+
+    function handlePartnerReady() {
+      setPartnerReady(true);
+    }
 
     async function addPendingCandidates() {
       for (const candidate of pendingCandidates.current) {
@@ -107,8 +112,10 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
     socket.on("call:offer", handleOffer);
     socket.on("call:answer", handleAnswer);
     socket.on("call:ice-candidate", handleIceCandidate);
+    socket.on("call:ready", handlePartnerReady);
 
     setPeerReady(true);
+    socket.emit("call:ready");
 
     return () => {
       setPeerReady(false);
@@ -116,6 +123,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
       socket.off("call:offer", handleOffer);
       socket.off("call:answer", handleAnswer);
       socket.off("call:ice-candidate", handleIceCandidate);
+      socket.off("call:ready", handlePartnerReady);
 
       peer.ontrack = null;
       peer.onicecandidate = null;
@@ -127,6 +135,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
 
       setRemoteStream(null);
       setConnectionState("new");
+      setPartnerReady(false);
     };
   }, [roomId, localStream]);
 
@@ -138,6 +147,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
       if (
         !peer ||
         !peerReady ||
+        !partnerReady ||
         !isInitiator ||
         participants !== 2 ||
         peer.signalingState !== "stable"
@@ -158,7 +168,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
     }
 
     createOffer();
-  }, [participants, isInitiator, peerReady]);
+  }, [participants, isInitiator, peerReady, partnerReady]);
 
   return {
     remoteStream,
