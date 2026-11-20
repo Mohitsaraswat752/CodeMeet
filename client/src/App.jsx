@@ -3,8 +3,9 @@ import socket from "./services/socket";
 import "./App.css";
 import CodeEditor from "./features/editor/CodeEditor";
 import VideoCall from "./features/video/VideoCall";
+import LandingPage from "./landing/LandingPage";
 
-function App() {
+function CollaborationApp() {
   const [connected, setConnected] = useState(false);
 
   const [roomId, setRoomId] = useState("");
@@ -249,6 +250,16 @@ function App() {
       </main>
     </div>
   );
+}
+
+function App() {
+  const [showWorkspace, setShowWorkspace] = useState(false);
+
+  if (!showWorkspace) {
+    return <LandingPage onGetStarted={() => setShowWorkspace(true)} />;
+  }
+
+  return <CollaborationApp />;
 }
 
 export default App;
