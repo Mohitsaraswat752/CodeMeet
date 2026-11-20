@@ -1,3 +1,5 @@
+import Reveal from "./Reveal";
+
 const features = [
   { icon: "code", title: "Real-time code editor", text: "Write, review, and iterate together in a shared editor that keeps your whole room in sync." },
   { icon: "call", title: "Video & audio calls", text: "Talk through the tricky bits face to face, without leaving your collaboration space." },
@@ -19,18 +21,20 @@ export default function Features() {
   return (
     <section className="features-section" id="features">
       <div className="section-shell">
-        <div className="section-heading">
+        <Reveal className="section-heading">
           <span className="section-kicker">EVERYTHING IN ONE ROOM</span>
           <h2>Tools that keep your<br /><em>momentum going.</em></h2>
           <p>Less switching tabs. More solving problems together.</p>
-        </div>
+        </Reveal>
         <div className="feature-grid">
           {features.map((feature, index) => (
-            <article className="feature-card" key={feature.title}>
-              <div className="feature-topline"><span className="feature-icon"><FeatureIcon type={feature.icon} /></span><span className="feature-number">0{index + 1}</span></div>
-              <h3>{feature.title}</h3><p>{feature.text}</p>
-              <span className="feature-arrow" aria-hidden="true">↗</span>
-            </article>
+            <Reveal key={feature.title} delay={index * 90}>
+              <article className="feature-card">
+                <div className="feature-topline"><span className="feature-icon"><FeatureIcon type={feature.icon} /></span><span className="feature-number">0{index + 1}</span></div>
+                <h3>{feature.title}</h3><p>{feature.text}</p>
+                <span className="feature-arrow" aria-hidden="true">↗</span>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>

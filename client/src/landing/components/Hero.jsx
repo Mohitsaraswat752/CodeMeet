@@ -1,3 +1,5 @@
+import Mascot from "./Mascot";
+
 export default function Hero({ onGetStarted }) {
   return (
     <section className="landing-hero" id="top">
@@ -133,6 +135,9 @@ export default function Hero({ onGetStarted }) {
             <i />
             <i />
           </span>
+        </div>
+        <div className="mascot-float">
+          <Mascot />
         </div>
         <span className="visual-spark spark-one">✳</span>
         <span className="visual-spark spark-two">✳</span>
