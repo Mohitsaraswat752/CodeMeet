@@ -16,7 +16,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
 
   const [remoteStream, setRemoteStream] = useState(null);
   const [connectionState, setConnectionState] = useState("new");
-  const [peerReady, setPeerReady] = useState(false);
+  //const [peerReady, setPeerReady] = useState(false);
   const [partnerReady, setPartnerReady] = useState(false);
 
   useEffect(() => {
@@ -114,11 +114,11 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
     socket.on("call:ice-candidate", handleIceCandidate);
     socket.on("call:ready", handlePartnerReady);
 
-    setPeerReady(true);
+    //setPeerReady(true);
     socket.emit("call:ready");
 
     return () => {
-      setPeerReady(false);
+      //setPeerReady(false);
 
       socket.off("call:offer", handleOffer);
       socket.off("call:answer", handleAnswer);
@@ -146,7 +146,6 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
 
       if (
         !peer ||
-        !peerReady ||
         !partnerReady ||
         !isInitiator ||
         participants !== 2 ||
@@ -168,7 +167,7 @@ function useWebRTC({ roomId, localStream, participants, isInitiator }) {
     }
 
     createOffer();
-  }, [participants, isInitiator, peerReady, partnerReady]);
+  }, [participants, isInitiator, partnerReady]);
 
   return {
     remoteStream,
