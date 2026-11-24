@@ -2,13 +2,17 @@ const express = require("express");
 const cors = require("cors");
 
 const app = express();
-
 app.use(
   cors({
     origin: "http://localhost:5173",
   })
 );
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
+const authRoutes = require("./src/routes/auth.routes");
+
+app.use("/api/auth", authRoutes);
 app.use(express.json());
 
 app.get("/", (req, res) => {

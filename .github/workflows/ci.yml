@@ -1,0 +1,29 @@
+name: CodeMeet CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install backend dependencies
+        run: npm ci
+        working-directory: ./server
+
+      - name: Check backend JavaScript syntax
+        run: |
+          find src -name "*.js" -exec node --check {} \;
+          node --check app.js
+          node --check server.js
+        working-directory: ./server
