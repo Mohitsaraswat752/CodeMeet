@@ -3,8 +3,9 @@ import socket from "./services/socket";
 import "./App.css";
 import CodeEditor from "./features/editor/CodeEditor";
 import VideoCall from "./features/video/VideoCall";
+import LandingPage from "./landing/LandingPage";
 
-function App() {
+function CollaborationApp() {
   const [connected, setConnected] = useState(false);
 
   const [roomId, setRoomId] = useState("");
@@ -98,8 +99,11 @@ function App() {
   }
 
   // Join an existing room
-  function joinRoom() {
-    if (!roomInput.trim()) {
+  function joinRoom(e) {
+    if (e) e.preventDefault();
+
+    const trimmedRoomId = roomInput.trim();
+    if (!trimmedRoomId) {
       setMessage("Please enter a Room ID.");
       return;
     }
@@ -107,7 +111,7 @@ function App() {
     setMessage("");
 
     socket.emit("room:join", {
-      roomId: roomInput,
+      roomId: trimmedRoomId,
     });
   }
 
@@ -125,7 +129,7 @@ function App() {
     try {
       await navigator.clipboard.writeText(roomId);
       setMessage("Room ID copied!");
-    } catch (error) {
+    } catch {
       setMessage("Could not copy Room ID. Please copy it manually.");
     }
   }
@@ -168,7 +172,7 @@ function App() {
               <span>OR</span>
             </div>
 
-            <div className="join-section">
+            <form className="join-section" onSubmit={joinRoom}>
               <label htmlFor="roomId">Join with Room ID</label>
 
               <input
@@ -177,16 +181,17 @@ function App() {
                 placeholder="Enter Room ID (e.g. CM-A1B2C3)"
                 value={roomInput}
                 onChange={(e) => setRoomInput(e.target.value)}
+                autoComplete="off"
               />
 
               <button
+                type="submit"
                 className="secondary-btn"
-                onClick={joinRoom}
-                disabled={!connected}
+                disabled={!connected || !roomInput.trim()}
               >
                 Join Room
               </button>
-            </div>
+            </form>
 
             {message && (
               <p className="message">{message}</p>
@@ -245,6 +250,16 @@ function App() {
       </main>
     </div>
   );
+}
+
+function App() {
+  const [showWorkspace, setShowWorkspace] = useState(false);
+
+  if (!showWorkspace) {
+    return <LandingPage onGetStarted={() => setShowWorkspace(true)} />;
+  }
+
+  return <CollaborationApp />;
 }
 
 export default App;
